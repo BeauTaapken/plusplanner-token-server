@@ -38,7 +38,7 @@ public class TokenController {
 
     @RequestMapping("/gettoken/{ftoken}")
     public String getNewToken(@PathVariable("ftoken") String ftoken) throws JsonProcessingException {
-        Role[] permissions = restTemplate.getForObject("http://localhost:8086/role/read/" + "sdfghjk", Role[].class);
+        Role[] permissions = restTemplate.getForObject("http://plus-planner-role-management-service/role/read/" + "sdfghjk", Role[].class);
         return generator.getNewToken("sdfghjk", "test", permissions);
     }
 
