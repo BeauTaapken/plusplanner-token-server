@@ -8,10 +8,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import plus.planner.tokenservice.models.Role;
 import plus.planner.tokenservice.models.UserData;
@@ -41,12 +38,13 @@ public class TokenController {
                         (RSAPrivateKey) readPrivateKeyFromFile("src/main/resources/PrivateKey.pem", "RSA")));
     }
 
-    @RequestMapping("/gettoken/{ftoken}")
-    public String getNewToken(@PathVariable("ftoken") String ftoken) throws JsonProcessingException {
+    @RequestMapping("/gettoken")
+    public String getNewToken(@RequestHeader("FToken") String ftoken) throws JsonProcessingException {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer "+ ftoken);
         HttpEntity<String> entity = new HttpEntity<String>(headers);
-        ResponseEntity<UserData> userData = restTemplate.exchange("https://api.fhict.nl/people/me", HttpMethod.GET, entity, UserData.class);
+        RestTemplate r = new RestTemplate();
+        ResponseEntity<UserData> userData = r.exchange("https://api.fhict.nl/people/me", HttpMethod.GET, entity, UserData.class);
         Role[] permissions = restTemplate.getForObject("http://plus-planner-role-management-service/role/read/" + "sdfghjk", Role[].class);
         return generator.getNewToken(userData.getBody(), permissions);
     }
