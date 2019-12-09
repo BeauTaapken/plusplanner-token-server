@@ -26,8 +26,9 @@ public class TokenGenerator {
                 .withJWTId(UUID.randomUUID().toString())
                 .withIssuedAt(new Date(System.currentTimeMillis()))
                 .withExpiresAt(new Date(System.currentTimeMillis() + (60 * 60 * 1000)))
-                .withClaim("uid", uid)
-                .withClaim("unm", usrnm)
+                .withClaim("uid", userData.getUid())
+                .withClaim("unm", userData.getDisplayName())
+                .withClaim("pfp", userData.getPhoto())
                 .withClaim("pms", permissionsstr)
                 .sign(algorithm);
     }
