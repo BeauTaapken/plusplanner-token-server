@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import plus.planner.tokenservice.models.Role;
+import plus.planner.tokenservice.models.UserData;
 
 import java.util.Date;
 import java.util.UUID;
@@ -18,7 +19,7 @@ public class TokenGenerator {
         this.objectMapper = new ObjectMapper();
     }
 
-    public String getNewToken(String uid, String usrnm, Role[] permissions) throws JsonProcessingException {
+    public String getNewToken(UserData userData, Role[] permissions) throws JsonProcessingException {
         String permissionsstr = objectMapper.writeValueAsString(permissions);
         return JWT.create()
                 .withIssuer("plus-planner-token-service")
