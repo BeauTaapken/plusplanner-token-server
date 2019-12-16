@@ -44,7 +44,7 @@ public class TokenController {
             HttpEntity<String> entity = new HttpEntity<String>(headers);
             RestTemplate r = new RestTemplate();
             ResponseEntity<UserData> userData = r.exchange("https://api.fhict.nl/people/me", HttpMethod.GET, entity, UserData.class);
-            Role[] permissions = restTemplate.getForObject("http://plus-planner-role-management-service/role/read/" + "sdfghjk", Role[].class);
+            Role[] permissions = restTemplate.getForObject("http://plus-planner-role-management-service/role/read/" + userData.getBody().getUid(), Role[].class);
             return new ResponseEntity(generator.getNewToken(userData.getBody(), permissions), HttpStatus.ACCEPTED);
         } catch (HttpClientErrorException e) {
             return new ResponseEntity(HttpStatus.UNAUTHORIZED);
