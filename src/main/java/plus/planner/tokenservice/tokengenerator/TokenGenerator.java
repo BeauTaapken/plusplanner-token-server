@@ -20,7 +20,7 @@ public class TokenGenerator {
     }
 
     public String getNewToken(UserData userData, Role[] permissions) throws JsonProcessingException {
-        String permissionsstr = objectMapper.writeValueAsString(permissions);
+        final String permissionsstr = objectMapper.writeValueAsString(permissions);
         return JWT.create()
                 .withIssuer("plus-planner-token-service")
                 .withJWTId(UUID.randomUUID().toString())
