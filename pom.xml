@@ -8,11 +8,11 @@
         <version>2.1.8.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>plus.planner.api</groupId>
-    <artifactId>plusplannerapi</artifactId>
+    <groupId>plus.planner.tokenserver</groupId>
+    <artifactId>plusplannertokenserver</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>plusplannerapi</name>
-    <description>PlusPlannerAPI</description>
+    <name>plusplannertokenserver</name>
+    <description>PlusPlannerTokenServer</description>
 
     <properties>
         <java.version>11</java.version>
