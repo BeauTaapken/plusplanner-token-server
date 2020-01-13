@@ -34,7 +34,7 @@ public class TokenController {
         logger.info("sending fontys request");
         final ResponseEntity<UserData> userData = r.exchange("https://api.fhict.nl/people/me", HttpMethod.GET, entity, UserData.class);
         logger.info("getting roles for userid: " + userData.getBody().getUid());
-        final Role[] permissions = restTemplate.getForObject("http://plus-planner-role-management-service/role/read/" + userData.getBody().getUid(), Role[].class);
+        final Role[] permissions = restTemplate.getForObject("https://plus-planner-role-management-service/role/read/" + userData.getBody().getUid(), Role[].class);
         logger.info("generating token");
         final String token = generator.getNewToken(userData.getBody(), permissions);
         logger.info("making response entity");
