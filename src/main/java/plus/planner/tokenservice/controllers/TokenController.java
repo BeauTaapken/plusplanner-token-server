@@ -4,17 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import plus.planner.tokenservice.models.Role;
 import plus.planner.tokenservice.models.UserData;
 import plus.planner.tokenservice.tokengenerator.TokenGenerator;
 
-import java.io.IOException;
-
+@CrossOrigin
 @RestController
 @RequestMapping("/token")
 public class TokenController {
@@ -22,12 +18,12 @@ public class TokenController {
     private final RestTemplate restTemplate;
     private final TokenGenerator generator;
 
-    public TokenController(RestTemplate restTemplate, TokenGenerator tokenGenerator) throws IOException {
+    public TokenController(RestTemplate restTemplate, TokenGenerator tokenGenerator) {
         this.restTemplate = restTemplate;
         this.generator = tokenGenerator;
     }
 
-    @RequestMapping(value = "/gettoken", method = RequestMethod.GET)
+    @GetMapping(value = "/gettoken")
     public ResponseEntity getNewToken(@RequestHeader("FToken") String ftoken) throws JsonProcessingException {
         logger.info("constructing fontys request");
         final HttpHeaders headers = new HttpHeaders();
@@ -41,7 +37,7 @@ public class TokenController {
                 "\",\"username\":\"" + userData.getBody().getDisplayName() +
                 "\",\"photo\":\"" + userData.getBody().getPhoto() + "\"}");
         restTemplate.postForObject("https://plus-planner-role-management-service/user/save", httpEntity, UserData.class);
-        logger.info("getting roles for userid: " + userData.getBody().getUid());
+        logger.info("getting roles for userid: {}", userData.getBody().getUid());
         final Role[] permissions = restTemplate.getForObject("https://plus-planner-role-management-service/role/read/" + userData.getBody().getUid(), Role[].class);
         logger.info("generating token");
         final String token = generator.getNewToken(userData.getBody(), permissions);
