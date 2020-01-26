@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import plus.planner.tokenservice.models.Role;
 import plus.planner.tokenservice.models.UserData;
+import plus.planner.tokenservice.provider.ITokenProvider;
 import plus.planner.tokenservice.tokengenerator.TokenGenerator;
 
 @CrossOrigin
@@ -15,12 +16,12 @@ import plus.planner.tokenservice.tokengenerator.TokenGenerator;
 @RequestMapping("/token")
 public class TokenController {
     private final Logger logger = LoggerFactory.getLogger(TokenController.class);
-    private final RestTemplate restTemplate;
     private final TokenGenerator generator;
+    private final ITokenProvider tokenProvider;
 
-    public TokenController(RestTemplate restTemplate, TokenGenerator tokenGenerator) {
-        this.restTemplate = restTemplate;
+    public TokenController(TokenGenerator tokenGenerator, ITokenProvider tokenProvider) {
         this.generator = tokenGenerator;
+        this.tokenProvider = tokenProvider;
     }
 
     @GetMapping(value = "/gettoken")
@@ -33,12 +34,9 @@ public class TokenController {
         logger.info("sending fontys request");
         final ResponseEntity<UserData> userData = r.exchange("https://api.fhict.nl/people/me", HttpMethod.GET, entity, UserData.class);
         logger.info("adding user");
-        final HttpEntity httpEntity = new HttpEntity("{\"userid\":\"" + userData.getBody().getUid() +
-                "\",\"username\":\"" + userData.getBody().getDisplayName() +
-                "\",\"photo\":\"" + userData.getBody().getPhoto() + "\"}");
-        restTemplate.postForObject("https://plus-planner-role-management-service/user/save", httpEntity, UserData.class);
+        tokenProvider.postUser(userData.getBody());
         logger.info("getting roles for userid: {}", userData.getBody().getUid());
-        final Role[] permissions = restTemplate.getForObject("https://plus-planner-role-management-service/role/read/" + userData.getBody().getUid(), Role[].class);
+        final Role[] permissions = tokenProvider.getRoles(userData.getBody().getUid());
         logger.info("generating token");
         final String token = generator.getNewToken(userData.getBody(), permissions);
         logger.info("making response entity");
